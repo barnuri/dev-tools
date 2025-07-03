@@ -10,6 +10,11 @@ brew install --cask maccy
 brew install wget
 brew install rg
 # https://www.bresink.com/osx/0TinkerTool/download.php # TinkerTool 
+brew install --cask git-credential-manager
+brew install --cask git
+brew install kubernetes-cli
+brew install helm
+brew install kubecolor
 ```
 
 # terminal
@@ -31,3 +36,12 @@ https://ke-complex-modifications.pqrs.org/#pc_shortcuts%20https://ke-complex-mod
 
 # wallpaper 
 https://windowswallpaper.miraheze.org/wiki/Img4_(Windows_10)#/media/File:Img4_(Windows_10).jpg
+
+# git
+```bash
+git-credential-manager configure
+git config --global credential.credentialStore cache
+git-credential-manager github login
+git config --global user.name "Bar Nuri"
+git config --global user.email "barnuri@hotmail.com"
+```
