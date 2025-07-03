@@ -19,6 +19,7 @@ brew install --cask kitty
 brew install powerlevel10k
 echo "source $(brew --prefix)/share/powerlevel10k/powerlevel10k.zsh-theme" >>~/.zshrc
 git clone --depth=1 https://github.com/romkatv/powerlevel10k.git "${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/themes/powerlevel10k"
+# cp .p10k.zsh to ~/.p10k.zsh 
 ```
 
 # pc shortcats
