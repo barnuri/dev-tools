@@ -9,6 +9,7 @@ syncProfileTools() {
         echo 'source $HOME/.profileTools.sh' >> "$HOME/.zshrc"
     fi
     source "$profile_tools_path"
+    echo "Profile tools updated and sourced."
 }
 
 alias grep='rg'
