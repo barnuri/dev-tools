@@ -11,7 +11,7 @@ syncProfileTools() {
     source "$profile_tools_path"
 }
 
-alias grep='rp'
+alias grep='rg'
 alias reloadProfile='source $HOME/.zshrc'
 alias ls='ls -alF'
 alias k='kubectl'
@@ -155,5 +155,3 @@ readEnvFile() {
     done < "$path"
 }
 
-# Export functions for interactive use
-export -f profileTools syncProfileTools reloadProfile colorString gitStatus p3venv p2venv venvActivate pipi pipp gitGetDefaultBranch gitRemoveMergedBranches getAllBranches gitCleanLocalBranches gitCleanIgnoreFiles gitMergeTo gitc gitnb gitnbm gitm gitMoveToHttps gitMoveToSSH gitDiff gitCheckoutFile gitCurrentBranchName gitCommitAndPush gitOriginUrl gitEmptyCommit gitSpeedUp hfile filesByGlob updateShell hardLink hostsFile hostFile profile which watch readEnvFile

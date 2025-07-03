@@ -8,7 +8,7 @@ brew install --cask latest
 brew install --cask shottr
 brew install --cask maccy
 brew install wget
-brew install rg
+brew install ripgrep
 # https://www.bresink.com/osx/0TinkerTool/download.php # TinkerTool 
 brew install --cask git-credential-manager
 brew install --cask git
