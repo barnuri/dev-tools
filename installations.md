@@ -29,3 +29,5 @@ brew install --cask karabiner-elements
 ```
 https://ke-complex-modifications.pqrs.org/#pc_shortcuts%20https://ke-complex-modifications.pqrs.org/#pc_shortcuts
 
+# wallpaper 
+https://windowswallpaper.miraheze.org/wiki/Img4_(Windows_10)#/media/File:Img4_(Windows_10).jpg
