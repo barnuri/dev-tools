@@ -3,7 +3,7 @@
 To install or update `profileTools.sh` and automatically source it in your shell profile, run:
 
 ```sh
-bash -c "$(curl -fsSL https://raw.githubusercontent.com/barnuri/mac-utils/master/profileTools.sh)" && source ~/.profileTools.sh
+curl -fsSL https://raw.githubusercontent.com/barnuri/mac-utils/master/profileTools.sh -o ~/.profileTools.sh && source ~/.profileTools.sh
 ```
 
 Or, from within a shell that already has the script, just run:
