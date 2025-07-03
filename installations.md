@@ -33,6 +33,8 @@ git clone --depth=1 https://github.com/romkatv/powerlevel10k.git "${ZSH_CUSTOM:-
 brew install --cask karabiner-elements
 ```
 https://ke-complex-modifications.pqrs.org/#pc_shortcuts%20https://ke-complex-modifications.pqrs.org/#pc_shortcuts
+https://marketplace.visualstudio.com/items?itemName=smcpeak.default-keys-windows
+
 
 # wallpaper 
 https://windowswallpaper.miraheze.org/wiki/Img4_(Windows_10)#/media/File:Img4_(Windows_10).jpg
