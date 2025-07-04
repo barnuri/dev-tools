@@ -15,6 +15,10 @@ brew install --cask git
 brew install kubernetes-cli
 brew install helm
 brew install kubecolor
+brew install python
+brew install awscli
+brew install uv
+brew install node
 ```
 
 # terminal
