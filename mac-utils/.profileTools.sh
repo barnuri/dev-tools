@@ -3,9 +3,11 @@
 # Download and update this script from GitHub
 syncProfileTools() {
     local profile_tools_path="$HOME/.profileTools.sh"
-    curl -fsSL "https://raw.githubusercontent.com/barnuri/dev-tools/refs/heads/master/mac-utils/profileTools.sh" -o "$profile_tools_path"
-    if ! grep -q 'source $HOME/.profileTools.sh' "$HOME/.zshrc"; then
-        echo 'source $HOME/.profileTools.sh' >> "$HOME/.zshrc"
+    curl -fsSL "https://raw.githubusercontent.com/barnuri/dev-tools/refs/heads/master/mac-utils/.profileTools.sh" -o "$profile_tools_path"
+    current_source_content=$(cat "$HOME/.zshrc")
+    if [[ $current_source_content != *"source $profile_tools_path"* ]]; then
+        echo "source $profile_tools_path" >> "$HOME/.zshrc"
+        echo "Added profile tools sourcing to .zshrc."
     fi
     source "$profile_tools_path"
     echo "Profile tools updated and sourced."
@@ -152,5 +154,23 @@ readEnvFile() {
     done < "$path"
 }
 
+gitCleanCommitsIntoOne() {
+    local defaultBranch=$(gitGetDefaultBranch)
+    git fetch origin "$defaultBranch"
+    git reset $(git merge-base "origin/$defaultBranch" $(git branch --show-current))
+    git add -A
+    local msg="${*:-$(gitCurrentBranchName)}"
+    git commit -m "$msg"
+    git push -f
+}
+alias gitSquash=gitCleanCommitsIntoOne
+
+gitCleanCommitsIntoOneWithoutCommit() {
+    local defaultBranch=$(gitGetDefaultBranch)
+    git fetch origin "$defaultBranch"
+    git reset $(git merge-base "origin/$defaultBranch" $(git branch --show-current))
+}
+alias gitSquashNoCommit=gitCleanCommitsIntoOneWithoutCommit
 
 export GIT_ASK_YESNO="false"
+
