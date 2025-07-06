@@ -17,10 +17,7 @@ alias reloadProfile='source $HOME/.zshrc'
 alias ls='ls -alF'
 alias k='kubectl'
 
-# Python venv helpers
-p3venv() { python3 -m venv venv; }
-p2venv() { python2 -m virtualenv venv; }
-venvActivate() { source ./venv/bin/activate; }
+venvActivate() { source ./.venv/bin/activate; }
 
 # pip install helpers
 pipi() {
