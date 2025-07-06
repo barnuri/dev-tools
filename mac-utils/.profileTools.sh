@@ -3,7 +3,7 @@
 # Download and update this script from GitHub
 syncProfileTools() {
     local profile_tools_path="$HOME/.profileTools.sh"
-    curl -fsSL "https://raw.githubusercontent.com/barnuri/mac-utils/master/profileTools.sh" -o "$profile_tools_path"
+    curl -fsSL "https://raw.githubusercontent.com/barnuri/dev-tools/refs/heads/master/mac-utils/profileTools.sh" -o "$profile_tools_path"
     if ! grep -q 'source $HOME/.profileTools.sh' "$HOME/.zshrc"; then
         echo '### load profileTools.sh' >> "$HOME/.zshrc"
         echo 'source $HOME/.profileTools.sh' >> "$HOME/.zshrc"
