@@ -58,3 +58,7 @@ git config --global user.email "barnuri@hotmail.com"
 ```bash
 echo '<username> ALL=(ALL) NOPASSWD: ALL' | sudo tee -a /etc/sudoers
 ```
+
+# vscode keybindings
+
+https://github.com/codebling/vs-code-default-keybindings/blob/master/windows.keybindings.json
