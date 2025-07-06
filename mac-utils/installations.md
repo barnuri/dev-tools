@@ -47,8 +47,14 @@ https://windowswallpaper.miraheze.org/wiki/Img4_(Windows_10)#/media/File:Img4_(W
 
 ```bash
 git-credential-manager configure
-git config --global credential.credentialStore cache
+git config --global credential.credentialStore keychain
 git-credential-manager github login
 git config --global user.name "Bar Nuri"
 git config --global user.email "barnuri@hotmail.com"
+```
+
+# no password on sudo
+
+```bash
+echo '<username> ALL=(ALL) NOPASSWD: ALL' | sudo tee -a /etc/sudoers
 ```
