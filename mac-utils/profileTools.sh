@@ -156,3 +156,5 @@ readEnvFile() {
     done < "$path"
 }
 
+
+export GIT_ASK_YESNO="false"
