@@ -4,7 +4,7 @@
             "complex_modifications": {
                 "rules": [
                     {
-                        "description": "PC-Style Back/Forward (Alt+Left Arrow/Alt+Right Arrow)",
+                        "description": "Back/Forward => to (Alt+Left Arrow/Alt+Right Arrow)",
                         "manipulators": [
                             {
                                 "conditions": [
@@ -73,7 +73,7 @@
                         ]
                     },
                     {
-                        "description": "Control + Space to Option + Escape in VSCode and VSCode Insiders",
+                        "description": "Control + Space => Option + Escape in VSCode and VSCode Insiders",
                         "manipulators": [
                             {
                                 "conditions": [
@@ -100,12 +100,12 @@
                         ]
                     },
                     {
-                        "description": "Control + Enter to Return (new line)",
+                        "description": "Left Control + Enter => Return (new line)",
                         "manipulators": [
                             {
                                 "from": {
                                     "key_code": "return_or_enter",
-                                    "modifiers": { "mandatory": ["control"] }
+                                    "modifiers": { "mandatory": ["left_control"] }
                                 },
                                 "to": [{ "key_code": "return_or_enter" }],
                                 "type": "basic"
@@ -113,7 +113,7 @@
                         ]
                     },
                     {
-                        "description": "Map Ctrl+Shift+C to Ctrl+C (SIGINT)",
+                        "description": "Ctrl+Shift+C to Ctrl+C (SIGINT)",
                         "manipulators": [
                             {
                                 "from": {
@@ -134,7 +134,7 @@
                         ]
                     },
                     {
-                        "description": "Map Control + Space to Tab",
+                        "description": "Control + Space => Tab",
                         "manipulators": [
                             {
                                 "from": {
@@ -373,7 +373,7 @@
                         ]
                     },
                     {
-                        "description": "Map Command+H to Control+Y (Browsers)",
+                        "description": "cmd+H to ctrl+Y (Browsers)",
                         "manipulators": [
                             {
                                 "conditions": [

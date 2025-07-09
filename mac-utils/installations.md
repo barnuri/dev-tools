@@ -19,6 +19,7 @@ brew install python
 brew install awscli
 brew install uv
 brew install node
+brew install --cask displaylink
 ```
 
 # terminal
