@@ -20,6 +20,8 @@ brew install awscli
 brew install uv
 brew install node
 brew install --cask displaylink
+brew install lsd
+brew install --cask mac-mouse-fix
 ```
 
 # terminal
