@@ -15,8 +15,9 @@ syncProfileTools() {
 
 alias grep='rg'
 alias reloadProfile='source $HOME/.zshrc'
-alias ls='ls -alF'
-alias k='kubectl'
+alias ls='lsd -alF'
+alias l="ls -l"
+alias k="kubecolor"
 
 venvActivate() { source ./.venv/bin/activate; }
 
@@ -173,4 +174,3 @@ gitCleanCommitsIntoOneWithoutCommit() {
 alias gitSquashNoCommit=gitCleanCommitsIntoOneWithoutCommit
 
 export GIT_ASK_YESNO="false"
-
