@@ -16,12 +16,17 @@ alias syncProfileTools=syncProfileTools
 
 alias grep='rg'
 alias reloadProfile='source $HOME/.zshrc'
-alias ls='ls -alF'
-alias k='kubectl'
+alias ls='lsd -alF'
+alias l="ls -l"
+alias k='kubecolor'
 
 venvActivate() { source ./.venv/bin/activate; }
 alias venvActivate=venvActivate
 
+venvActivate() {
+    local venv_dir="${1:-.}"
+    source "$venv_dir/.venv/bin/activate"
+}
 # pip install helpers
 pipi() {
     python3 -m pip install --upgrade pip
@@ -199,4 +204,3 @@ alias gitCleanCommitsIntoOneWithoutCommit=gitCleanCommitsIntoOneWithoutCommit
 alias gitSquashNoCommit=gitCleanCommitsIntoOneWithoutCommit
 
 export GIT_ASK_YESNO="false"
-
