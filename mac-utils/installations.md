@@ -25,8 +25,13 @@ brew install --cask displaylink
 # terminal
 
 ```bash
-sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" # all my zsh
+sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" # oh my zsh
 brew install --cask kitty
+# download minimal-git.zsh-theme into ${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/themes
+curl -fsSL https://raw.githubusercontent.com/barnuri/dev-tools/master/mac-utils/minimal-git.zsh-theme -o "${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/themes/minimal-git.zsh-theme"
+# set ZSH_THEME="minimal-git" in ~/.zshrc
+
+# p10k option
 brew install powerlevel10k
 echo "source $(brew --prefix)/share/powerlevel10k/powerlevel10k.zsh-theme" >>~/.zshrc
 git clone --depth=1 https://github.com/romkatv/powerlevel10k.git "${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/themes/powerlevel10k"

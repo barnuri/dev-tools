@@ -12,6 +12,7 @@ syncProfileTools() {
     source "$profile_tools_path"
     echo "Profile tools updated and sourced."
 }
+alias syncProfileTools=syncProfileTools
 
 alias grep='rg'
 alias reloadProfile='source $HOME/.zshrc'
@@ -19,34 +20,42 @@ alias ls='ls -alF'
 alias k='kubectl'
 
 venvActivate() { source ./.venv/bin/activate; }
+alias venvActivate=venvActivate
 
 # pip install helpers
 pipi() {
     python3 -m pip install --upgrade pip
     pip install --upgrade -r REQUIREMENTS
 }
+alias pipi=pipi
 pipp() {
     python3 -m pip install --upgrade pip
     pip install .
 }
+alias pipp=pipp
 
 # Git helpers
 gitGetDefaultBranch() {
     git symbolic-ref refs/remotes/origin/HEAD 2>/dev/null | sed 's@^refs/remotes/origin/@@' || echo master
 }
+alias gitGetDefaultBranch=gitGetDefaultBranch
 gitRemoveMergedBranches() {
     git branch --merged | grep -v '\*' | grep -v master | xargs -n 1 git branch -d
 }
+alias gitRemoveMergedBranches=gitRemoveMergedBranches
 getAllBranches() {
     git branch -a | sed 's/.* //;s/remotes\///' | sort -u | grep -v HEAD
 }
+alias getAllBranches=getAllBranches
 gitCleanLocalBranches() {
     git fetch --all --prune
     git branch | grep -v '\*' | xargs -n 1 git branch -D
 }
+alias gitCleanLocalBranches=gitCleanLocalBranches
 gitCleanIgnoreFiles() {
     git clean -dfx -f
 }
+alias gitCleanIgnoreFiles=gitCleanIgnoreFiles
 gitMergeTo() {
     local targetBranchName="${1:-integration}"
     local currentBranch=$(git branch --show-current)
@@ -56,13 +65,16 @@ gitMergeTo() {
     git push
     git checkout "$currentBranch"
 }
+alias gitMergeTo=gitMergeTo
 alias gitmt=gitMergeTo
 gitc() {
     local branchName="${1:-$(gitGetDefaultBranch)}"
     git checkout "$branchName"
     git pull --no-edit
 }
+alias gitc=gitc
 gitnb() { git checkout -b "$1"; }
+alias gitnb=gitnb
 gitnbm() {
     local branchName="$1"
     local defaultBranch=$(gitGetDefaultBranch)
@@ -70,12 +82,14 @@ gitnbm() {
     git checkout "origin/$defaultBranch"
     gitnb "$branchName"
 }
+alias gitnbm=gitnbm
 gitm() {
     local branchName="${1:-$(gitGetDefaultBranch)}"
     git fetch origin "$branchName"
     git pull --no-edit
     git merge -X ignore-all-space --no-ff "origin/$branchName"
 }
+alias gitm=gitm
 gitMoveToHttps() {
     local url=$(git remote get-url origin)
     [[ "$url" == http* ]] && return
@@ -83,6 +97,7 @@ gitMoveToHttps() {
     moveToHttp=${moveToHttp/:/\/}
     git remote set-url origin "$moveToHttp"
 }
+alias gitMoveToHttps=gitMoveToHttps
 gitMoveToSSH() {
     local url=$(git remote get-url origin)
     [[ "$url" == git@* ]] && return
@@ -91,19 +106,23 @@ gitMoveToSSH() {
     moveToSsh=${moveToSsh//\//:}
     git remote set-url origin "$moveToSsh"
 }
+alias gitMoveToSSH=gitMoveToSSH
 gitDiff() {
     local branchName="${1:-$(gitGetDefaultBranch)}"
     git fetch origin "$branchName"
     git diff "origin/$branchName...$(git branch --show-current)" --name-status
 }
+alias gitDiff=gitDiff
 gitCheckoutFile() {
     local branchName="$1"; shift
     git fetch origin "$branchName"
     git checkout "origin/$branchName" -- "$@"
 }
+alias gitCheckoutFile=gitCheckoutFile
 gitCurrentBranchName() {
     git rev-parse --abbrev-ref HEAD
 }
+alias gitCurrentBranchName=gitCurrentBranchName
 gitCommitAndPush() {
     local currentBranchName=$(gitCurrentBranchName)
     if ! git config branch."$currentBranchName".merge &>/dev/null; then
@@ -115,6 +134,7 @@ gitCommitAndPush() {
     git pull --no-edit
     git push
 }
+alias gitCommitAndPush=gitCommitAndPush
 alias gitp=gitCommitAndPush
 
 gitOriginUrl() {
@@ -125,6 +145,7 @@ gitOriginUrl() {
     [[ "$repoUrl" != http* ]] && repoUrl="https://$repoUrl"
     echo "$repoUrl"
 }
+alias gitOriginUrl=gitOriginUrl
 
 gitEmptyCommit() {
     local msg="${1:-empty commit - trigger status checks}"
@@ -132,6 +153,7 @@ gitEmptyCommit() {
     git pull --no-edit
     git push
 }
+alias gitEmptyCommit=gitEmptyCommit
 
 gitSpeedUp() {
     git fsck
@@ -139,6 +161,7 @@ gitSpeedUp() {
     git gc --aggressive --prune=now --force
     git status
 }
+alias gitSpeedUp=gitSpeedUp
 
 alias filesByGlob='find . -name "$1"'
 alias hardLink='ln -sf "$1" "$2"'
@@ -153,6 +176,7 @@ readEnvFile() {
         export "$key"="${value//\"/}"
     done < "$path"
 }
+alias readEnvFile=readEnvFile
 
 gitCleanCommitsIntoOne() {
     local defaultBranch=$(gitGetDefaultBranch)
@@ -163,6 +187,7 @@ gitCleanCommitsIntoOne() {
     git commit -m "$msg"
     git push -f
 }
+alias gitCleanCommitsIntoOne=gitCleanCommitsIntoOne
 alias gitSquash=gitCleanCommitsIntoOne
 
 gitCleanCommitsIntoOneWithoutCommit() {
@@ -170,6 +195,7 @@ gitCleanCommitsIntoOneWithoutCommit() {
     git fetch origin "$defaultBranch"
     git reset $(git merge-base "origin/$defaultBranch" $(git branch --show-current))
 }
+alias gitCleanCommitsIntoOneWithoutCommit=gitCleanCommitsIntoOneWithoutCommit
 alias gitSquashNoCommit=gitCleanCommitsIntoOneWithoutCommit
 
 export GIT_ASK_YESNO="false"
