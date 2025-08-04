@@ -1,9 +1,9 @@
 #!/bin/bash
 
 # Download and update this script from GitHub
-syncProfileTools() {
-    local profile_tools_path="$HOME/.profileTools.sh"
-    curl -fsSL "https://raw.githubusercontent.com/barnuri/dev-tools/refs/heads/master/mac-utils/.profileTools.sh" -o "$profile_tools_path"
+syncProfileToolsFunc() {
+    local profile_tools_path="$HOME/profileTools.sh"
+    curl -fsSL "https://raw.githubusercontent.com/barnuri/dev-tools/refs/heads/master/mac-utils/profileTools.sh" -o "$profile_tools_path"
     current_source_content=$(cat "$HOME/.zshrc")
     if [[ $current_source_content != *"source $profile_tools_path"* ]]; then
         echo "source $profile_tools_path" >> "$HOME/.zshrc"
@@ -12,7 +12,7 @@ syncProfileTools() {
     source "$profile_tools_path"
     echo "Profile tools updated and sourced."
 }
-alias syncProfileTools=syncProfileTools
+alias syncProfileTools=syncProfileToolsFunc
 
 alias grep='rg'
 alias reloadProfile='source $HOME/.zshrc'
@@ -20,47 +20,47 @@ alias ls='lsd -alF'
 alias l="ls -l"
 alias k='kubecolor'
 
-venvActivate() {
+venvActivateFunc() {
     local venv_dir="${1:-.}"
     source "$venv_dir/.venv/bin/activate"
 }
-alias venvActivate=venvActivate
+alias venvActivate=venvActivateFunc
 
 # pip install helpers
-pipi() {
+pipiFunc() {
     python3 -m pip install --upgrade pip
     pip install --upgrade -r REQUIREMENTS
 }
-alias pipi=pipi
-pipp() {
+alias pipi=pipiFunc
+pippFunc() {
     python3 -m pip install --upgrade pip
     pip install .
 }
-alias pipp=pipp
+alias pipp=pippFunc
 
 # Git helpers
-gitGetDefaultBranch() {
+gitGetDefaultBranchFunc() {
     git symbolic-ref refs/remotes/origin/HEAD 2>/dev/null | sed 's@^refs/remotes/origin/@@' || echo master
 }
-alias gitGetDefaultBranch=gitGetDefaultBranch
-gitRemoveMergedBranches() {
+alias gitGetDefaultBranch=gitGetDefaultBranchFunc
+gitRemoveMergedBranchesFunc() {
     git branch --merged | grep -v '\*' | grep -v master | xargs -n 1 git branch -d
 }
-alias gitRemoveMergedBranches=gitRemoveMergedBranches
-getAllBranches() {
+alias gitRemoveMergedBranches=gitRemoveMergedBranchesFunc
+getAllBranchesFunc() {
     git branch -a | sed 's/.* //;s/remotes\///' | sort -u | grep -v HEAD
 }
-alias getAllBranches=getAllBranches
-gitCleanLocalBranches() {
+alias getAllBranches=getAllBranchesFunc
+gitCleanLocalBranchesFunc() {
     git fetch --all --prune
     git branch | grep -v '\*' | xargs -n 1 git branch -D
 }
-alias gitCleanLocalBranches=gitCleanLocalBranches
-gitCleanIgnoreFiles() {
+alias gitCleanLocalBranches=gitCleanLocalBranchesFunc
+gitCleanIgnoreFilesFunc() {
     git clean -dfx -f
 }
-alias gitCleanIgnoreFiles=gitCleanIgnoreFiles
-gitMergeTo() {
+alias gitCleanIgnoreFiles=gitCleanIgnoreFilesFunc
+gitMergeToFunc() {
     local targetBranchName="${1:-integration}"
     local currentBranch=$(git branch --show-current)
     git checkout "$targetBranchName"
@@ -69,40 +69,40 @@ gitMergeTo() {
     git push
     git checkout "$currentBranch"
 }
-alias gitMergeTo=gitMergeTo
-alias gitmt=gitMergeTo
-gitc() {
+alias gitMergeTo=gitMergeToFunc
+alias gitmt=gitMergeToFunc
+gitcFunc() {
     local branchName="${1:-$(gitGetDefaultBranch)}"
     git checkout "$branchName"
     git pull --no-edit
 }
-alias gitc=gitc
-gitnb() { git checkout -b "$1"; }
-alias gitnb=gitnb
-gitnbm() {
+alias gitc=gitcFunc
+gitnbFunc() { git checkout -b "$1"; }
+alias gitnb=gitnbFunc
+gitnbmFunc() {
     local branchName="$1"
     local defaultBranch=$(gitGetDefaultBranch)
     git fetch origin "$defaultBranch"
     git checkout "origin/$defaultBranch"
     gitnb "$branchName"
 }
-alias gitnbm=gitnbm
-gitm() {
+alias gitnbm=gitnbmFunc
+gitmFunc() {
     local branchName="${1:-$(gitGetDefaultBranch)}"
     git fetch origin "$branchName"
     git pull --no-edit
     git merge -X ignore-all-space --no-ff "origin/$branchName"
 }
-alias gitm=gitm
-gitMoveToHttps() {
+alias gitm=gitmFunc
+gitMoveToHttpsFunc() {
     local url=$(git remote get-url origin)
     [[ "$url" == http* ]] && return
     local moveToHttp=${url/git@/https://}
     moveToHttp=${moveToHttp/:/\/}
     git remote set-url origin "$moveToHttp"
 }
-alias gitMoveToHttps=gitMoveToHttps
-gitMoveToSSH() {
+alias gitMoveToHttps=gitMoveToHttpsFunc
+gitMoveToSSHFunc() {
     local url=$(git remote get-url origin)
     [[ "$url" == git@* ]] && return
     local moveToSsh=${url/https:\/\//git@}
@@ -110,24 +110,24 @@ gitMoveToSSH() {
     moveToSsh=${moveToSsh//\//:}
     git remote set-url origin "$moveToSsh"
 }
-alias gitMoveToSSH=gitMoveToSSH
-gitDiff() {
+alias gitMoveToSSH=gitMoveToSSHFunc
+gitDiffFunc() {
     local branchName="${1:-$(gitGetDefaultBranch)}"
     git fetch origin "$branchName"
     git diff "origin/$branchName...$(git branch --show-current)" --name-status
 }
-alias gitDiff=gitDiff
-gitCheckoutFile() {
+alias gitDiff=gitDiffFunc
+gitCheckoutFileFunc() {
     local branchName="$1"; shift
     git fetch origin "$branchName"
     git checkout "origin/$branchName" -- "$@"
 }
-alias gitCheckoutFile=gitCheckoutFile
-gitCurrentBranchName() {
+alias gitCheckoutFile=gitCheckoutFileFunc
+gitCurrentBranchNameFunc() {
     git rev-parse --abbrev-ref HEAD
 }
-alias gitCurrentBranchName=gitCurrentBranchName
-gitCommitAndPush() {
+alias gitCurrentBranchName=gitCurrentBranchNameFunc
+gitCommitAndPushFunc() {
     local currentBranchName=$(gitCurrentBranchName)
     if ! git config branch."$currentBranchName".merge &>/dev/null; then
         git push --set-upstream origin "$currentBranchName"
@@ -138,10 +138,10 @@ gitCommitAndPush() {
     git pull --no-edit
     git push
 }
-alias gitCommitAndPush=gitCommitAndPush
-alias gitp=gitCommitAndPush
+alias gitCommitAndPush=gitCommitAndPushFunc
+alias gitp=gitCommitAndPushFunc
 
-gitOriginUrl() {
+gitOriginUrlFunc() {
     local repoUrl=$(git config --get remote.origin.url)
     repoUrl=${repoUrl#git@}
     repoUrl=${repoUrl/:/\/}
@@ -149,28 +149,28 @@ gitOriginUrl() {
     [[ "$repoUrl" != http* ]] && repoUrl="https://$repoUrl"
     echo "$repoUrl"
 }
-alias gitOriginUrl=gitOriginUrl
+alias gitOriginUrl=gitOriginUrlFunc
 
-gitEmptyCommit() {
+gitEmptyCommitFunc() {
     local msg="${1:-empty commit - trigger status checks}"
     git commit --allow-empty -m "$msg"
     git pull --no-edit
     git push
 }
-alias gitEmptyCommit=gitEmptyCommit
+alias gitEmptyCommit=gitEmptyCommitFunc
 
-gitSpeedUp() {
+gitSpeedUpFunc() {
     git fsck
     git repack -ad
     git gc --aggressive --prune=now --force
     git status
 }
-alias gitSpeedUp=gitSpeedUp
+alias gitSpeedUp=gitSpeedUpFunc
 
 alias filesByGlob='find . -name "$1"'
 alias hardLink='ln -sf "$1" "$2"'
 alias hostFile='echo "/etc/hosts"'
-readEnvFile() {
+readEnvFileFunc() {
     local path="${1:-.env}"
     while IFS= read -r line; do
         [[ "$line" =~ ^\s*# ]] && continue
@@ -180,9 +180,9 @@ readEnvFile() {
         export "$key"="${value//\"/}"
     done < "$path"
 }
-alias readEnvFile=readEnvFile
+alias readEnvFile=readEnvFileFunc
 
-gitCleanCommitsIntoOne() {
+gitCleanCommitsIntoOneFunc() {
     local defaultBranch=$(gitGetDefaultBranch)
     git fetch origin "$defaultBranch"
     git reset $(git merge-base "origin/$defaultBranch" $(git branch --show-current))
@@ -191,15 +191,15 @@ gitCleanCommitsIntoOne() {
     git commit -m "$msg"
     git push -f
 }
-alias gitCleanCommitsIntoOne=gitCleanCommitsIntoOne
-alias gitSquash=gitCleanCommitsIntoOne
+alias gitCleanCommitsIntoOne=gitCleanCommitsIntoOneFunc
+alias gitSquash=gitCleanCommitsIntoOneFunc
 
-gitCleanCommitsIntoOneWithoutCommit() {
+gitCleanCommitsIntoOneWithoutCommitFunc() {
     local defaultBranch=$(gitGetDefaultBranch)
     git fetch origin "$defaultBranch"
     git reset $(git merge-base "origin/$defaultBranch" $(git branch --show-current))
 }
-alias gitCleanCommitsIntoOneWithoutCommit=gitCleanCommitsIntoOneWithoutCommit
-alias gitSquashNoCommit=gitCleanCommitsIntoOneWithoutCommit
+alias gitCleanCommitsIntoOneWithoutCommit=gitCleanCommitsIntoOneWithoutCommitFunc
+alias gitSquashNoCommit=gitCleanCommitsIntoOneWithoutCommitFunc
 
 export GIT_ASK_YESNO="false"
