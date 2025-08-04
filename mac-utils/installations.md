@@ -22,6 +22,9 @@ brew install node
 brew install --cask displaylink
 brew install lsd
 brew install --cask mac-mouse-fix
+
+brew tap notwadegrimridge/brew
+brew install pingplace --no-quarantine
 ```
 
 # terminal
