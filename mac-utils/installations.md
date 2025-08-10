@@ -22,9 +22,10 @@ brew install node
 brew install --cask displaylink
 brew install lsd
 brew install --cask mac-mouse-fix
+brew install --cask swiftdefaultappsprefpane
 
-brew tap notwadegrimridge/brew
-brew install pingplace --no-quarantine
+brew tap barnuri/brew
+brew install barnuri/brew/windock --no-quarantine
 ```
 
 # terminal
