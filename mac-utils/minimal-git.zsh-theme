@@ -76,7 +76,11 @@ precmd() {
   if [[ -n $GIT_ENTRY ]]; then
     gitBlock="%F{yellow}${GIT_ENTRY}%f"
   fi
-  export PS1="${cwdBlock}${gitBlock} > "
+  VENV_BLOCK=""
+  if [[ -n $VIRTUAL_ENV_PROMPT ]]; then
+    VENV_BLOCK="%F{blue}[${VIRTUAL_ENV_PROMPT}]%f"
+  fi
+  export PS1="${cwdBlock}${gitBlock}${VENV_BLOCK} > "
   if [[ -n $elapsed ]]; then
     export RPROMPT="%F{magenta}${elapsed}s%f"
   else
