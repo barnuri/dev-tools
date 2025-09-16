@@ -65,7 +65,7 @@ gitMergeToFunc() {
     local currentBranch=$(git branch --show-current)
     git checkout "$targetBranchName"
     git pull --no-edit
-    git merge -X ignore-all-space --no-ff "$currentBranch"
+    git merge -X ignore-all-space --no-edit --no-ff "$currentBranch"
     git push
     git checkout "$currentBranch"
 }
