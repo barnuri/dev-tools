@@ -227,7 +227,7 @@ function gitMergeTo(
     $currentBranch = $(git branch --show-current)
     git checkout $targetBranchName;
     git pull --no-edit;
-    git merge -X ignore-all-space --no-ff $currentBranch ;
+    git merge -X ignore-all-space --no-edit --no-ff $currentBranch ;
     git push ;
     git checkout $currentBranch ;
 }
@@ -331,6 +331,7 @@ function gitCleanCommitsIntoOne() {
     git commit -m "$msg";
     git push -f;
 }
+Set-Alias gitSquash gitCleanCommitsIntoOne
 
 function gitCleanCommitsIntoOneWithoutCommit() {
     $msg = getCommitMsg "$args"
@@ -338,6 +339,7 @@ function gitCleanCommitsIntoOneWithoutCommit() {
     git fetch origin $defaultBranch;
     git reset $(git merge-base origin/$defaultBranch $(git branch --show-current));
 }
+Set-Alias gitSquashNoCommit gitCleanCommitsIntoOneWithoutCommit
 
 function gitCommitAndPush() {
     $currentBranchName = $(gitCurrentBranchName)
