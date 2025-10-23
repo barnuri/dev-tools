@@ -40,7 +40,8 @@ alias pipp=pippFunc
 
 # Git helpers
 gitGetDefaultBranchFunc() {
-    git remote show origin | sed -n '/HEAD branch/s/.*: //p' || echo "master" 
+    val=$(git remote show origin | sed -n '/HEAD branch/s/.*: //p' || echo "master")
+    echo "$val"
 }
 alias gitGetDefaultBranch=gitGetDefaultBranchFunc
 gitRemoveMergedBranchesFunc() {
