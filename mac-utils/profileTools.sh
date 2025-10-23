@@ -40,7 +40,7 @@ alias pipp=pippFunc
 
 # Git helpers
 gitGetDefaultBranchFunc() {
-    git symbolic-ref refs/remotes/origin/HEAD 2>/dev/null | sed 's@^refs/remotes/origin/@@' || echo master
+    git remote show origin | sed -n '/HEAD branch/s/.*: //p' || echo "master" 
 }
 alias gitGetDefaultBranch=gitGetDefaultBranchFunc
 gitRemoveMergedBranchesFunc() {
