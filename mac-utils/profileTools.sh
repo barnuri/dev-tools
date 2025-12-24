@@ -204,3 +204,5 @@ alias gitCleanCommitsIntoOneWithoutCommit=gitCleanCommitsIntoOneWithoutCommitFun
 alias gitSquashNoCommit=gitCleanCommitsIntoOneWithoutCommitFunc
 
 export GIT_ASK_YESNO="false"
+
+kbuild="kustomize build --load-restrictor=LoadRestrictionsNone --enable-helm"
