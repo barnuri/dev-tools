@@ -79,6 +79,8 @@ precmd() {
   VENV_BLOCK=""
   if [[ -n $VIRTUAL_ENV_PROMPT ]]; then
     VENV_BLOCK="%F{blue}[${VIRTUAL_ENV_PROMPT}]%f"
+    alias python="$VIRTUAL_ENV/bin/python"
+    alias python3="$VIRTUAL_ENV/bin/python3"
   fi
   export PS1="${cwdBlock}${gitBlock}${VENV_BLOCK} > "
   if [[ -n $elapsed ]]; then
