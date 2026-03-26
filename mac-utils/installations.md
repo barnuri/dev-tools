@@ -9,6 +9,7 @@ brew install --cask shottr
 brew install --cask maccy
 brew install --cask alt-tab
 brew install gh
+brew install --cask alfred
 brew install wget
 brew install ripgrep
 # https://www.bresink.com/osx/0TinkerTool/download.php # TinkerTool
