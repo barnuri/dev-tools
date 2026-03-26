@@ -3,6 +3,10 @@
 To install or update `profileTools.sh` and automatically source it in your shell profile, run:
 
 ```sh
+brew install fzf
+git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions
+git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting
+
 curl -fsSL https://raw.githubusercontent.com/barnuri/dev-tools/refs/heads/master/mac-utils/profileTools.sh -o ~/profileTools.sh && source ~/profileTools.sh
 ```
 
