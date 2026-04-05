@@ -8,6 +8,7 @@ git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.oh-m
 git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting
 
 curl -fsSL https://raw.githubusercontent.com/barnuri/dev-tools/refs/heads/master/mac-utils/profileTools.sh -o ~/profileTools.sh && source ~/profileTools.sh
+curl -o ~/.oh-my-zsh/custom/themes/minimal-git.zsh-theme https://raw.githubusercontent.com/barnuri/dev-tools/refs/heads/master/mac-utils/minimal-git.zsh-theme
 ```
 
 Or, from within a shell that already has the script, just run:
