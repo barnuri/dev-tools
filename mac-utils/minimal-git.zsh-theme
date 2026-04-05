@@ -10,7 +10,7 @@ setopt EXTENDED_GLOB
 # Git status function
 _git_status() {
   local branch ahead behind deleted modify new merges untracked
-  if [[ ! -d .git ]]; then
+  if ! git rev-parse --git-dir &>/dev/null; then
     echo ""
     return
   fi
@@ -55,12 +55,13 @@ _git_status() {
 }
 
 # Preexec: capture start time
-preexec() {
+_minimal_git_preexec() {
   ELAPSED_START=$(date +%s.%N)
 }
+preexec_functions+=(_minimal_git_preexec)
 
-# Precpm: set prompt
-precmd() {
+# Precmd: set prompt
+_minimal_git_precmd() {
   local exit_status=$?
   setopt localoptions
   if [[ -n $ELAPSED_START ]]; then
@@ -89,3 +90,4 @@ precmd() {
     export RPROMPT=""
   fi
 }
+precmd_functions+=(_minimal_git_precmd)
