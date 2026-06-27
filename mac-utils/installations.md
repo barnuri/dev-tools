@@ -67,6 +67,7 @@ git config --global credential.credentialStore keychain
 git-credential-manager github login
 git config --global user.name "Bar Nuri"
 git config --global user.email "barnuri@hotmail.com"
+git config --global core.mergeoptions --no-edit
 ```
 
 # no password on sudo
