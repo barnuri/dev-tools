@@ -92,7 +92,7 @@ gitmFunc() {
     local branchName="${1:-$(gitGetDefaultBranch)}"
     git fetch origin "$branchName"
     git pull --no-edit
-    git merge -X ignore-all-space --no-ff "origin/$branchName"
+    git merge -X ignore-all-space --no-ff "origin/$branchName" --no-edit
 }
 alias gitm=gitmFunc
 gitMoveToHttpsFunc() {
