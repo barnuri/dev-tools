@@ -74,17 +74,17 @@ alias gitMergeTo=gitMergeToFunc
 alias gitmt=gitMergeToFunc
 gitcFunc() {
     local branchName="${1:-$(gitGetDefaultBranch)}"
-    git checkout "$branchName"
+    git checkout "$branchName" --ignore-other-worktrees
     git pull --no-edit
 }
 alias gitc=gitcFunc
-gitnbFunc() { git checkout -b "$1"; }
+gitnbFunc() { git checkout -b "$1" --ignore-other-worktrees; }
 alias gitnb=gitnbFunc
 gitnbmFunc() {
     local branchName="$1"
     local defaultBranch=$(gitGetDefaultBranch)
     git fetch origin "$defaultBranch"
-    git checkout "origin/$defaultBranch"
+    git checkout "origin/$defaultBranch" --ignore-other-worktrees
     gitnb "$branchName"
 }
 alias gitnbm=gitnbmFunc
