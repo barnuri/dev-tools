@@ -208,3 +208,196 @@ export GIT_ASK_YESNO="false"
 alias kbuild="kustomize build --load-restrictor=LoadRestrictionsNone --enable-helm"
 
 alias del="rm -rf"
+
+
+
+
+create-pr() {
+  local branch draft=0 auto_merge=0
+
+  for arg in "$@"; do
+    case "$arg" in
+      --draft)      draft=1 ;;
+      --auto-merge) auto_merge=1 ;;
+    esac
+  done
+
+  branch=$(git branch --show-current 2>/dev/null)
+  [[ -z "$branch" ]] && { echo "Not in a git repo." >&2; return 1; }
+
+  local ticket_key
+  if [[ "$branch" =~ '^([A-Z]+-[0-9]+)' ]]; then
+    ticket_key="${match[1]}"
+  else
+    ticket_key=""
+  fi
+  if [[ -z "$ticket_key" ]]; then
+    echo "Branch '$branch' does not start with a Jira ticket key (e.g. GENAI-123-my-feature)." >&2
+    return 1
+  fi
+
+  local base
+  base=$(git remote show origin 2>/dev/null | awk '/HEAD branch/ {print $NF}')
+  [[ -z "$base" ]] && base=master
+
+  local label="stg-from-side-branch"
+  if ! gh label list --json name -q '.[].name' 2>/dev/null | grep -qx "$label"; then
+    echo "Label '$label' not found in repo; creating it..."
+    gh label create "$label" --color BFD4F2 --description "Deploy to staging from a side branch" \
+      || { echo "Failed to create label '$label'." >&2; return 1; }
+  fi
+
+  local slug summary
+  slug=$(echo "$branch" | sed "s/^${ticket_key}//" | sed 's/^[-_]*//' | sed 's/[-_]*$//')
+  if [[ -n "$slug" ]]; then
+    summary="$slug"
+  else
+    summary=$(git log "${base}..HEAD" --oneline --no-merges 2>/dev/null | tail -1 | sed 's/^[a-f0-9]* //')
+  fi
+  local title="${ticket_key}: ${summary}"
+
+  local existing_url
+  existing_url=$(gh pr list --head "$branch" --state open --json url -q '.[0].url' 2>/dev/null)
+  if [[ -n "$existing_url" ]]; then
+    echo "Open PR already exists:"
+    echo "$existing_url"
+    echo -n "$existing_url" | pbcopy
+    echo "(copied to clipboard)"
+    return 0
+  fi
+
+  echo "Pushing branch..."
+  git push --set-upstream origin "$branch" || { echo "Push failed." >&2; return 1; }
+
+  local commits
+  commits=$(git log "${base}..HEAD" --oneline --no-merges --reverse 2>/dev/null | sed 's/^[a-f0-9]* /- /')
+
+  local create_flags=(--title "$title" --body "$title" --label "$label")
+  (( draft )) && create_flags+=(--draft)
+
+  echo "Creating PR: $title"
+  local pr_url
+  pr_url=$(gh pr create "${create_flags[@]}")
+  echo "$pr_url"
+  echo -n "$pr_url" | pbcopy
+  echo "(copied to clipboard)"
+
+  if (( auto_merge )); then
+    echo "Enabling auto-merge..."
+    gh pr merge "$pr_url" --auto --squash
+  fi
+}
+
+
+
+h() {
+    emulate -L zsh
+    command -v herdr >/dev/null || { echo "herdr-space: herdr CLI not found" >&2; return 1; }
+
+    local name="${1:-$(basename "$PWD")}"
+    local list_json
+    list_json=$(herdr workspace list 2>&1) || { echo "herdr-space: $list_json" >&2; return 1; }
+
+    local existing_id
+    existing_id=$(echo "$list_json" | jq -r --arg name "$name" \
+        '.result.workspaces[] | select(.label == $name or (.label | endswith(" " + $name))) | .workspace_id' \
+        | head -n1)
+
+    if [[ -n "$existing_id" ]]; then
+        herdr workspace focus "$existing_id" >/dev/null
+        echo "Focused herdr space '$name' ($existing_id)"
+        herdr
+        return 0
+    fi
+
+    local created_json new_id
+    created_json=$(herdr workspace create --cwd "$PWD" --label "$name" --focus 2>&1) \
+        || { echo "herdr-space: $created_json" >&2; return 1; }
+    new_id=$(echo "$created_json" | jq -r '.result.workspace.workspace_id // empty')
+    if [[ -z "$new_id" ]]; then
+        echo "herdr-space: failed to create workspace for '$name'" >&2
+        echo "$created_json" >&2
+        return 1
+    fi
+    echo "Created + focused herdr space '$name' ($new_id)"
+    herdr
+}
+
+export HOMEBREW_NO_ENV_HINTS=1
+
+alias code="code-insiders"
+alias k="kubecolor"
+alias kbuild="kustomize build --load-restrictor=LoadRestrictionsNone --enable-helm"
+export EDITOR="code-insiders -w"
+export KUBE_EDITOR="code-insiders --wait"
+
+
+getJobsToDelete() {
+    jobs=$(k get jobs -o json | jq '.items[] | select(.status.startTime and ((now - (.status.startTime | fromdateiso8601)) > 1800)) | {jobName: .metadata.name, lastConditionType: (.status.conditions[-1].type)}')
+    jobsToDelete=$(echo "$jobs" | jq -r 'select(.lastConditionType == "Complete" or .lastConditionType == "Failed") | .jobName')
+    export jobsToDelete="$jobsToDelete"
+    export jobs="$jobs"
+    echo "Jobs to delete: $jobsToDelete"
+}
+
+deleteJobs() {
+    if [ -z "$jobsToDelete" ]; then
+        echo "No jobs to delete."
+        return 0
+    fi
+    echo "$jobsToDelete" | tr ' ' '\n' | awk NF | sort -u | xargs kubecolor delete job --ignore-not-found
+}
+
+
+retryPRCommitChecks() {
+    set -euo pipefail
+
+    PR_REF="${1:-}"
+
+    echo "Fetching PR status checks..."
+
+    if [ -n "$PR_REF" ]; then
+        json=$(gh pr view "$PR_REF" --json statusCheckRollup --jq '.statusCheckRollup')
+    else
+        json=$(gh pr view --json statusCheckRollup --jq '.statusCheckRollup')
+    fi
+
+    # Extract unique run IDs from failed CheckRuns
+    run_ids=$(echo "$json" | jq -r '
+        [ .[] | select(.__typename == "CheckRun" and .conclusion == "FAILURE") | .detailsUrl ]
+        | map(capture("/actions/runs/(?<id>[0-9]+)") | .id)
+        | unique
+        | .[]
+    ')
+
+    if [ -z "$run_ids" ]; then
+        echo "No failed workflow runs found."
+        exit 0
+    fi
+
+    count=$(echo "$run_ids" | wc -l | tr -d ' ')
+    echo "Found $count failed workflow run(s). Retrying..."
+
+    while IFS= read -r run_id; do
+        echo "  Rerunning failed jobs for run $run_id..."
+        gh run rerun "$run_id" --failed || echo "  Warning: failed to rerun $run_id"
+    done <<< "$run_ids"
+
+    echo "Done."
+}
+
+retryPRCommitChecksEveryXMin() {
+    local interval="${1:-1}"
+    while true; do
+        echo "$(date): Running retryPRCommitChecks..."
+        retryPRCommitChecks "$2"
+        echo "$(date): Completed. Next run in $interval minute(s)."
+        echo "---"
+        sleep $((interval * 60))
+    done
+}
+
+killByPort() {
+    port="${1:-9090}"
+    lsof -t -i tcp:$port | xargs kill
+}
