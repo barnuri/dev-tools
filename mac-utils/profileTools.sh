@@ -293,6 +293,23 @@ create-pr() {
 h() {
     emulate -L zsh
     command -v herdr >/dev/null || { echo "herdr-space: herdr CLI not found" >&2; return 1; }
+    command -v jq >/dev/null || { echo "herdr-space: jq not found" >&2; return 1; }
+
+    # workspace CLI needs a live server; start one if needed before list/create
+    if ! herdr status --json 2>/dev/null | jq -e '.server.running == true' >/dev/null; then
+        echo "Starting herdr server..."
+        herdr server >/dev/null 2>&1 &!
+        local i=0
+        while (( i < 50 )); do
+            herdr status --json 2>/dev/null | jq -e '.server.running == true' >/dev/null && break
+            sleep 0.1
+            (( i++ ))
+        done
+        if ! herdr status --json 2>/dev/null | jq -e '.server.running == true' >/dev/null; then
+            echo "herdr-space: failed to start herdr server" >&2
+            return 1
+        fi
+    fi
 
     local name="${1:-$(basename "$PWD")}"
     local list_json
