@@ -28,11 +28,17 @@ typeset -g _MINIMAL_GIT_UNKNOWN=' %F{yellow}(%F{red}…%F{yellow})%f'
 # cannot distinguish EOF from a tripped timeout in this loop form, so success is judged by
 # content instead — which also covers "not a git repository" and any git error for free.
 _git_collect_status() {
+  # An interactive shell has job control on, so the coprocess would be announced on both ends
+  # ("[3] 98937" when it starts, "[3] + done git status ..." at the next prompt). NO_MONITOR
+  # silences the start notice; disown drops the job from the table so nothing is reported when
+  # it finishes. The pid is captured first, since disown is what makes it unreachable by job spec.
+  setopt local_options no_monitor no_notify
   _git_lines=()
   local line saw_header=0
 
   coproc git status --porcelain=v2 --branch 2>/dev/null
   local coproc_pid=$!
+  disown %% 2>/dev/null
 
   while IFS= read -r -p -t $MINIMAL_GIT_TIMEOUT line; do
     _git_lines+=("$line")
