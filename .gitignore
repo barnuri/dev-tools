@@ -8,3 +8,4 @@ build
 **/*.pyc
 **/node_modules
 **/.DS_Store
+**/agent-spec
