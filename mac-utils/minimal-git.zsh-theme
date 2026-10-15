@@ -147,13 +147,18 @@ _minimal_git_precmd() {
   if [[ -n $_GIT_STATUS_BLOCK ]]; then
     gitBlock="%F{yellow}${_GIT_STATUS_BLOCK}%f"
   fi
+  local ghxBlock=""
+  if (( $+commands[ghx] )); then
+    local ghx_profile=$(ghx ghx current 2>/dev/null)
+    [[ -n $ghx_profile ]] && ghxBlock=" %F{magenta}[gh:${ghx_profile}]%f"
+  fi
   VENV_BLOCK=""
   if [[ -n $VIRTUAL_ENV_PROMPT ]]; then
     VENV_BLOCK="%F{blue}[${VIRTUAL_ENV_PROMPT}]%f"
     alias python="$VIRTUAL_ENV/bin/python"
     alias python3="$VIRTUAL_ENV/bin/python3"
   fi
-  export PS1="${cwdBlock}${gitBlock}${VENV_BLOCK} > "
+  export PS1="${cwdBlock}${gitBlock}${ghxBlock}${VENV_BLOCK} > "
   if [[ -n $elapsed ]]; then
     export RPROMPT="%F{magenta}${elapsed}s%f"
   else
