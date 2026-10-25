@@ -1,9 +1,9 @@
 // ==UserScript==
 // @name         Mark test files as viewed
 // @namespace    https://github.com/barnuri/dev-tools
-// @version      1.0.0
+// @version      1.1.0
 // @description  Marks every test file in a GitHub PR diff as viewed
-// @match        https://github.com/*/pull/*
+// @match        https://github.com/*
 // @grant        GM_registerMenuCommand
 // @updateURL    https://raw.githubusercontent.com/barnuri/dev-tools/master/browser-scripts/mark-test-files-viewed.user.js
 // @downloadURL  https://raw.githubusercontent.com/barnuri/dev-tools/master/browser-scripts/mark-test-files-viewed.user.js
@@ -93,8 +93,21 @@
     alert(`marked ${marked} test files as viewed`);
   };
 
+  const addButton = () => {
+    const button = document.createElement('button');
+    button.textContent = 'Mark tests viewed';
+    button.style.cssText =
+      'position:fixed;bottom:16px;right:16px;z-index:9999;padding:8px 12px;border-radius:6px;border:1px solid #1f883d;background:#1f883d;color:#fff;font-weight:600;cursor:pointer;display:none';
+    button.onclick = markTestFilesViewed;
+    document.body.append(button);
+    setInterval(() => {
+      button.style.display = /\/pull\/\d+\/(files|changes)/.test(location.pathname) ? 'block' : 'none';
+    }, 1000);
+  };
+
   if (typeof GM_registerMenuCommand === 'function') {
     GM_registerMenuCommand('Mark test files as viewed', markTestFilesViewed);
+    addButton();
   } else {
     markTestFilesViewed();
   }
