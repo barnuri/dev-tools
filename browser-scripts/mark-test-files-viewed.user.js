@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Mark test files as viewed
 // @namespace    https://github.com/barnuri/dev-tools
-// @version      1.1.0
+// @version      1.2.0
 // @description  Marks every test file in a GitHub PR diff as viewed
 // @match        https://github.com/*
 // @grant        GM_registerMenuCommand
@@ -95,13 +95,16 @@
 
   const addButton = () => {
     const button = document.createElement('button');
+    button.type = 'button';
     button.textContent = 'Mark tests viewed';
-    button.style.cssText =
-      'position:fixed;bottom:16px;right:16px;z-index:9999;padding:8px 12px;border-radius:6px;border:1px solid #1f883d;background:#1f883d;color:#fff;font-weight:600;cursor:pointer;display:none';
+    button.className = 'btn btn-sm btn-primary';
+    button.style.cssText = 'margin:auto 8px;align-self:center';
     button.onclick = markTestFilesViewed;
-    document.body.append(button);
     setInterval(() => {
-      button.style.display = /\/pull\/\d+\/(files|changes)/.test(location.pathname) ? 'block' : 'none';
+      const filesTab = document.querySelector('#prs-files-anchor-tab');
+      if (filesTab && button.nextElementSibling !== filesTab) {
+        filesTab.before(button);
+      }
     }, 1000);
   };
 
