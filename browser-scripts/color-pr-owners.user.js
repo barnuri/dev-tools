@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Color PR owners and repos
 // @namespace    https://github.com/barnuri/dev-tools
-// @version      1.3.0
+// @version      1.4.0
 // @description  Gives each PR author and each repo a stable color on GitHub pull request lists
 // @match        https://github.com/*
 // @grant        none
@@ -47,7 +47,12 @@
     const hue = colorFor(key);
     const text = isDark() ? `hsl(${hue},40%,75%)` : `hsl(${hue},40%,32%)`;
     el.style.cssText += `;background:hsla(${hue},40%,55%,0.14);color:${text} !important;border:1px solid hsla(${hue},35%,55%,0.35);padding:0 6px;border-radius:10px;font-weight:500;text-decoration:none`;
+    if (key === `author:${currentLogin()}`) {
+      el.style.fontSize = '1.15em';
+    }
   };
+
+  const currentLogin = () => (document.querySelector('meta[name="user-login"]')?.content || '').toLowerCase();
 
   // On /pulls views the author is a button whose text is "Full Name (login)", with no href.
   const authorLogin = (a) => {
