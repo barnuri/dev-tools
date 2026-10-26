@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Color PR owners and repos
 // @namespace    https://github.com/barnuri/dev-tools
-// @version      1.0.0
+// @version      1.2.0
 // @description  Gives each PR author and each repo a stable color on GitHub pull request lists
 // @match        https://github.com/*
 // @grant        none
@@ -34,13 +34,19 @@
     return colors[key];
   };
 
+  const isDark = () => {
+    const mode = document.documentElement.dataset.colorMode;
+    return mode === 'dark' || (mode !== 'light' && matchMedia('(prefers-color-scheme: dark)').matches);
+  };
+
   const paint = (el, key) => {
     if (el.dataset.colorKey === key) {
       return;
     }
     el.dataset.colorKey = key;
     const hue = colorFor(key);
-    el.style.cssText += `;background:hsl(${hue},65%,40%);color:#fff !important;padding:0 6px;border-radius:10px;text-decoration:none`;
+    const text = isDark() ? `hsl(${hue},80%,75%)` : `hsl(${hue},80%,28%)`;
+    el.style.cssText += `;background:hsla(${hue},80%,50%,0.18);color:${text} !important;border:1px solid hsla(${hue},80%,50%,0.5);padding:0 6px;border-radius:10px;font-weight:600;text-decoration:none`;
   };
 
   const authorLogin = (a) => {
@@ -48,20 +54,47 @@
     return (href.match(/author:([^\s&+]+)/) || href.match(/^\/([^/?#]+)$/) || [])[1] || a.textContent.trim();
   };
 
-  const rows = () => document.querySelectorAll('[data-listview-component="items-list"] > li, .js-issue-row');
+  const isAuthor = (a) =>
+    a.dataset.testid === 'author-filter-link' ||
+    a.dataset.hovercardType === 'user' ||
+    /author(%3A|:)/i.test(a.getAttribute('href') || '');
+
+  // Repo pages, the /pulls dashboard and saved views render rows differently, so a row is any
+  // list item that holds a link to a single PR.
+  const rows = () =>
+    new Set(
+      [...document.querySelectorAll('a[href*="/pull/"]')]
+        .map((a) => a.closest('li, [role="listitem"], [role="row"], .js-issue-row'))
+        .filter(Boolean),
+    );
+
+  const repoKey = (a) => {
+    const path = new URL(a.href, location.origin).pathname.replace(/\/$/, '');
+    const repo = (path.match(/^\/[^/]+\/[^/]+/) || [])[0];
+    const text = a.textContent.trim().toLowerCase();
+    if (!repo) {
+      return null;
+    }
+    const named = text === repo.slice(1).toLowerCase() || text === repo.split('/')[2].toLowerCase();
+    return a.dataset.hovercardType === 'repository' || repoPath.test(path) || named ? `repo:${repo.toLowerCase()}` : null;
+  };
 
   const colorize = () => {
     if (!pullsPage.test(location.pathname)) {
       return;
     }
     for (const row of rows()) {
-      for (const a of row.querySelectorAll('a[data-testid="author-filter-link"], .opened-by a[data-hovercard-type="user"]')) {
-        paint(a, `author:${authorLogin(a).toLowerCase()}`);
-      }
       for (const a of row.querySelectorAll('a[href]')) {
-        const path = new URL(a.href, location.origin).pathname;
-        if (a.dataset.testid !== 'author-filter-link' && (a.dataset.hovercardType === 'repository' || repoPath.test(path))) {
-          paint(a, `repo:${path.replace(/\/$/, '').toLowerCase()}`);
+        if (!a.textContent.trim()) {
+          continue;
+        }
+        if (isAuthor(a)) {
+          paint(a, `author:${authorLogin(a).toLowerCase()}`);
+          continue;
+        }
+        const key = repoKey(a);
+        if (key) {
+          paint(a, key);
         }
       }
     }
