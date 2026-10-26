@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Color PR owners and repos
 // @namespace    https://github.com/barnuri/dev-tools
-// @version      1.2.0
+// @version      1.3.0
 // @description  Gives each PR author and each repo a stable color on GitHub pull request lists
 // @match        https://github.com/*
 // @grant        none
@@ -45,13 +45,15 @@
     }
     el.dataset.colorKey = key;
     const hue = colorFor(key);
-    const text = isDark() ? `hsl(${hue},80%,75%)` : `hsl(${hue},80%,28%)`;
-    el.style.cssText += `;background:hsla(${hue},80%,50%,0.18);color:${text} !important;border:1px solid hsla(${hue},80%,50%,0.5);padding:0 6px;border-radius:10px;font-weight:600;text-decoration:none`;
+    const text = isDark() ? `hsl(${hue},40%,75%)` : `hsl(${hue},40%,32%)`;
+    el.style.cssText += `;background:hsla(${hue},40%,55%,0.14);color:${text} !important;border:1px solid hsla(${hue},35%,55%,0.35);padding:0 6px;border-radius:10px;font-weight:500;text-decoration:none`;
   };
 
+  // On /pulls views the author is a button whose text is "Full Name (login)", with no href.
   const authorLogin = (a) => {
     const href = decodeURIComponent(a.getAttribute('href') || '');
-    return (href.match(/author:([^\s&+]+)/) || href.match(/^\/([^/?#]+)$/) || [])[1] || a.textContent.trim();
+    const text = a.textContent.trim();
+    return (href.match(/author:([^\s&+]+)/) || href.match(/^\/([^/?#]+)$/) || text.match(/\(([^()]+)\)$/) || [])[1] || text;
   };
 
   const isAuthor = (a) =>
@@ -69,6 +71,12 @@
     );
 
   const repoKey = (a) => {
+    if (a.dataset.testid === 'repo-filter-link') {
+      return `repo:/${a.textContent.trim().toLowerCase()}`;
+    }
+    if (!a.href) {
+      return null;
+    }
     const path = new URL(a.href, location.origin).pathname.replace(/\/$/, '');
     const repo = (path.match(/^\/[^/]+\/[^/]+/) || [])[0];
     const text = a.textContent.trim().toLowerCase();
@@ -84,7 +92,7 @@
       return;
     }
     for (const row of rows()) {
-      for (const a of row.querySelectorAll('a[href]')) {
+      for (const a of row.querySelectorAll('a[href], button[data-testid="author-filter-link"], button[data-testid="repo-filter-link"]')) {
         if (!a.textContent.trim()) {
           continue;
         }
